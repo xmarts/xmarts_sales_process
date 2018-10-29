@@ -28,7 +28,7 @@
           </group>
           <group>
             <field name="rev_cred_coll" groups="account.group_account_manager" attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"/>
-            <field name="rev_logistic" groups="stock.group_stock_manager" attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"/>
+            <field name="rev_logistic" attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"/>
           </group>
         </xpath>
         <xpath expr="//notebook" position="inside">
