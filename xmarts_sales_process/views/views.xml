@@ -1,60 +1,116 @@
 <odoo>
   <data>
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="xmarts_sales_process.list">
-      <field name="name">xmarts_sales_process list</field>
-      <field name="model">xmarts_sales_process.xmarts_sales_process</field>
+
+    <record id="xmarts_sales_process_res_partner" model="ir.ui.view">
+      <field name="name">xmarts_sales_process_res_partner</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
       <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
+        <xpath expr="//group[@name='purchase']" position="inside">
+          <field name="is_carrier" attrs="{'invisible': [('supplier', '=', False)]}"/>
+        </xpath>
+        <xpath expr="//field[@name='message_bounce']" position="after">
+          <field name="no_validate_sale" />
+        </xpath>
       </field>
     </record>
-    -->
 
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="xmarts_sales_process.action_window">
-      <field name="name">xmarts_sales_process window</field>
-      <field name="res_model">xmarts_sales_process.xmarts_sales_process</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
-
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="xmarts_sales_process.action_server">
-      <field name="name">xmarts_sales_process server</field>
-      <field name="model_id" ref="model_xmarts_sales_process_xmarts_sales_process"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
+    <record id="xmarts_sales_process_fields" model="ir.ui.view">
+      <field name="name">xmarts_sales_process_fields</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet/group[1]" position="inside">
+          <group>
+            <field name="valid_from" />
+            <field name="valid_until" />
+            <field name="publication_date" />
+          </group>
+          <group>
+            <field name="rev_cred_coll" groups="account.group_account_manager" attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"/>
+            <field name="rev_logistic" groups="stock.group_stock_manager" attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"/>
+          </group>
+        </xpath>
+        <xpath expr="//notebook" position="inside">
+          <page string='Trasporte'>
+            <group>
+              <group string='Datos generales'>
+                <field name="deadline" />
+                <field name="confirmation_number" />
+                <field name="observations" />
+              </group>
+              <group string='Transportista'>
+                <field name="carrier_line" domain="[('is_carrier','=',True)]"/>
+                <field name="operator_name" />
+                <field name="license_number" />
+                <field name="license_type" />
+                <field name="route" />
+              </group>
+              <group string='Paquete'>
+                <field name="clean_unit" />
+                <field name="no_leaks" />
+                <field name="damage_door_floor" />
+                <field name="odor_free" />
+                <field name="no_graffiti" />
+              </group>
+              <group string='Transporte'>
+                <field name="empty_weight" />
+                <field name="loaded_weight" />
+                <field name="transport_observations" />
+                <field name="transport_state" />
+              </group>
+            </group>
+          </page>
+        </xpath>
       </field>
     </record>
-    -->
 
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="xmarts_sales_process" id="xmarts_sales_process.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="xmarts_sales_process.menu_1" parent="xmarts_sales_process.menu_root"/>
-    <menuitem name="Menu 2" id="xmarts_sales_process.menu_2" parent="xmarts_sales_process.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="xmarts_sales_process.menu_1_list" parent="xmarts_sales_process.menu_1"
-              action="xmarts_sales_process.action_window"/>
-    <menuitem name="Server to list" id="xmarts_sales_process" parent="xmarts_sales_process.menu_2"
-              action="xmarts_sales_process.action_server"/>
-    -->
+    <record    id="view_form_sales_route" model="ir.ui.view">
+      <field name="name">Formulario Rutas</field>
+      <field name="model">sales.route</field>
+      <field name="arch" type="xml">
+          <form>
+              <header></header>
+              <sheet string="Rutas">
+                  <group>
+                      <group >
+                          <field name="name"/>
+                          <field name="time" widget="float_time"/>
+                      </group>
+                      <group>
+                          <field name="origin"/>
+                          <field name="destination"/>
+                      </group>
+                  </group>
+              </sheet>
+          </form>
+      </field>
+    </record>
+
+    <record id="view_tree_sales_route" model="ir.ui.view">
+      <field name="name">Lista Rutas</field>
+      <field name="model">sales.route</field>
+      <field name="arch" type="xml">
+          <tree >
+              <field name="name" />
+              <field name="origin" />
+              <field name="destination" />
+          </tree>
+      </field>
+    </record>
+
+    <act_window
+                id="action_sales_routes"
+                name="Rutas"
+                res_model="sales.route"
+                view_mode="tree,form"/>
+
+    <menuitem id="sales_process_routes"
+            name="Rutas"
+            parent="sale.menu_sale_config"
+            action="action_sales_routes"
+            sequence="66"/>
+
+
   </data>
 </odoo>
